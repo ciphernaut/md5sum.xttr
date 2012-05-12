@@ -4,3 +4,4 @@ support more platforms (use openssl instead?)
 support xfs
 support nfs?
 support more routines
+use priviledge seperation and move attributes into trusted attributes
