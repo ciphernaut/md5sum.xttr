@@ -1,0 +1,26 @@
+#!/bin/sh
+
+# work with seconds from epoch.  switch to subsecond timestamp support down the track
+READDATE=$(stat -c %Y $1)
+# ideally we would check if the underlying filesystem supported user xttr
+STOREDSUM=$(getfattr --only-values -n user.md5sumvalue $1)
+STOREDDATE=$(getfattr --only-values -n user.md5sumdate $1)
+
+
+if [ $STOREDDATE ]; then
+	# value read
+	if [ $READDATE -lt $STOREDDATE ]; then
+		# stored value was ok
+		echo "$STOREDSUM  $1"
+	else
+        	# we will need to recalculate
+		SUM=$( md5sum $1 )
+		setfattr -n user.md5sumvalue -v $SUM $1 && setfattr -n user.md5sumdate -v $(date +%s) $1 || echo "could not store" >&2
+		echo "$SUM"
+	fi
+else
+	# never set or not supported
+	SUM=$( md5sum $1 )
+	setfattr -n user.md5sumvalue -v $SUM $1 && setfattr -n user.md5sumdate -v $(date +%s) $1 || echo "could not store" >&2
+	echo "$SUM"
+fi

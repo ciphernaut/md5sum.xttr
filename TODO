@@ -1,0 +1,6 @@
+rewrite in c
+test underlying folesystem support for user extended attributes and skip if not available
+support more platforms (use openssl instead?)
+support xfs
+support nfs?
+support more routines
